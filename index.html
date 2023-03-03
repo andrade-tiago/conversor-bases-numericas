@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<title>Conversor de Bases Numéricas</title>
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.min.css" />
+		<link rel="stylesheet" href="./css/styles.css" />
+
+		<script defer src="./js/script.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="content">
+				<h1>Conversor de Bases Numéricas</h1>
+
+				<section>
+					<p id="num-cards"><span>0</span>/<span>0</span></p>
+
+					<div id="cards-grid">
+						<div class="card" id="add">
+							<button
+								class="btn bi bi-plus-lg"
+								title="Adicionar card">
+							</button>
+						</div>
+					</div>
+
+					<section>
+						<h2>Resumo</h2>
+
+						<ul id="summary"></ul>
+						<button
+							id="summary-copy"
+							class="btn copy bi bi-files"
+							title="Copiar resumo"
+						></button>
+						<button
+							id="summary-share"
+							class="btn gold bi bi-share-fill"
+							title="Compartilhar resumo"
+						></button>
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<footer>
+			<div class="container">
+				<div class="content">
+					<p>Copyright &copy; <span class="current-year"></span> Tiago Andrade</p>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>
