@@ -15,34 +15,10 @@ let
 	cardsCount = 0,
 	value      = 255;
 
-// Configurações iniciais
-numCards.children[1].innerHTML = MAX_CARDS;
-addCards(10, 16);
-for (const yearSpace of document.getElementsByClassName('current-year'))
-	yearSpace.innerHTML = new Date().getFullYear();
-
-// Eventos
-addButton.addEventListener('click', () => addCards());
-
-summaryCopy.addEventListener('click', () =>
-	navigator.clipboard.writeText(getSummaryText())
-);
-summaryCopy.addEventListener('click', toogleIcon);
-
-if (typeof navigator.share === "function") {
-	summaryShare.addEventListener('click', () =>
-		navigator.share({
-			title: document.title,
-			text: getSummaryText(),
-			url: window.location.href
-		})
-	);
-} else summaryShare.disabled = true;
-
-// Funções e procedimentos
+// FUNÇÕES E PROCEDIMENTOS
 
 // Adiciona um ou mais cards ao grid
-function addCards(... radixes) {
+const addCards = (... radixes) => {
 	if (!radixes.length) radixes = [10];
 
 	for (const radix of radixes) {
@@ -104,7 +80,7 @@ function addCards(... radixes) {
 }
 
 // Remove o cartão do qual o botão de remover fora clicado
-function cardRemove(event) {
+const cardRemove = event => {
 	cardsGrid.removeChild(event.target.parentNode);
 	numCards.children[0].innerHTML = --cardsCount;
 	addButton.disabled = false;
@@ -112,7 +88,7 @@ function cardRemove(event) {
 }
 
 // Atualiza o valor do card ao mudar a base
-function updateValue(event) {
+const updateValue = event => {
 	const element = event.target;
 	let radix = parseInt(element.value);
 
@@ -128,7 +104,7 @@ function updateValue(event) {
 }
 
 // Atualiza o valor em todos os cards
-function alterValue(event) {
+const alterValue = event => {
 	const card = event.target.parentNode;
 
 	value = parseInt(
@@ -147,14 +123,14 @@ function alterValue(event) {
 }
 
 // Copiar valor do card
-function copyValue(event) {
+const copyValue = event => {
 	navigator.clipboard.writeText(
 		event.target.parentNode.children[3].value
 	);
 }
 
 // Alterar ícone do botão
-function toogleIcon(event) {
+const toogleIcon = event => {
 	const copyButton = event.target;
 	copyButton.classList.remove('bi-files');
 	copyButton.classList.add('bi-check2-square');
@@ -163,7 +139,7 @@ function toogleIcon(event) {
 }
 
 // Devolver o ícone original
-function restoreIcon(event) {
+const restoreIcon = event => {
 	const copyButton = event.target;
 	copyButton.classList.remove('bi-check2-square');
 	copyButton.classList.add('bi-files');
@@ -172,7 +148,7 @@ function restoreIcon(event) {
 }
 
 // Atualiza o resumo
-function updateSummary() {
+const updateSummary = () => {
 	summary.innerHTML = '';
 
 	if (cardsCount) {
@@ -199,8 +175,34 @@ function updateSummary() {
 }
 
 // Retorna o conteúdo da área de resumo como texto
-function getSummaryText() {
+const getSummaryText = () => {
 	return summary.innerHTML
 		.replace(/<li>/g, '')
 		.replace(/<\/li>/g, '\r\n');
 }
+
+
+
+// CONFIGURAÇÕES INICIAIS E EVENTOS
+
+numCards.children[1].innerHTML = MAX_CARDS;
+addCards(10, 16);
+for (const yearSpace of document.getElementsByClassName('current-year'))
+	yearSpace.innerHTML = new Date().getFullYear();
+
+addButton.addEventListener('click', () => addCards());
+
+summaryCopy.addEventListener('click', () =>
+	navigator.clipboard.writeText(getSummaryText())
+);
+summaryCopy.addEventListener('click', toogleIcon);
+
+if (typeof navigator.share === "function") {
+	summaryShare.addEventListener('click', () =>
+		navigator.share({
+			title: document.title,
+			text: getSummaryText(),
+			url: window.location.href
+		})
+	);
+} else summaryShare.disabled = true;
