@@ -34,7 +34,8 @@ const addCards = (... radixes) => {
 		card.appendChild(component);
 
 		component = document.createElement('input');
-		component.classList.add('input', 'radix');
+		component.classList.add('input');
+		component.dataset.radix = '';
 		component.type  = 'number';
 		component.value = radix;
 		component.min   = MIN_RADIX;
@@ -47,7 +48,8 @@ const addCards = (... radixes) => {
 		card.appendChild(component);
 
 		component = document.createElement('input');
-		component.classList.add('input', 'value');
+		component.classList.add('input');
+		component.dataset.value = '';
 		component.type  = 'text';
 		component.value = value.toString(radix).toUpperCase();
 		component.addEventListener('keyup', alterValue);
@@ -57,7 +59,8 @@ const addCards = (... radixes) => {
 		component = document.createElement('button');
 		component.classList.add('btn', 'copy', 'bi', 'bi-files');
 		component.title = 'Copiar valor';
-		component.addEventListener('click', toogleIcon);
+		component.addEventListener('click', changeCopyButtonIcon);
+		component.addEventListener('blur', changeCopyButtonIcon);
 		component.addEventListener('click', copyValue);
 		card.appendChild(component);
 
@@ -69,7 +72,7 @@ const addCards = (... radixes) => {
 
 		cardsGrid.insertBefore(card, addButton.parentNode);
 
-		if (++cardsCount == MAX_CARDS) {
+		if (++cardsCount === MAX_CARDS) {
 			addButton.disabled = true;
 			break;
 		}
@@ -81,7 +84,9 @@ const addCards = (... radixes) => {
 
 // Remove o cartão do qual o botão de remover fora clicado
 const cardRemove = event => {
-	cardsGrid.removeChild(event.target.parentNode);
+    const card = event.target.parentNode;
+
+	cardsGrid.removeChild(card);
 	numCards.children[0].innerHTML = --cardsCount;
 	addButton.disabled = false;
 	updateSummary();
@@ -90,14 +95,14 @@ const cardRemove = event => {
 // Atualiza o valor do card ao mudar a base
 const updateValue = event => {
 	const element = event.target;
-	let radix = parseInt(element.value);
+	let radix = (element.value === ''? 10: parseInt(element.value));
 
 	if (radix < MIN_RADIX)
 		element.value = radix = MIN_RADIX;
 	else if (radix > MAX_RADIX)
 		element.value = radix = MAX_RADIX;
 	
-	element.parentNode.children[3].value =
+	element.parentNode.querySelector('[data-value]').value =
 		value.toString(radix).toUpperCase();
 	
 	updateSummary();
@@ -107,44 +112,44 @@ const updateValue = event => {
 const alterValue = event => {
 	const card = event.target.parentNode;
 
-	value = parseInt(
-		card.children[3].value,
-		card.children[1].value
-	);
+	value = (() => {
+		const content = {
+			radix: card.querySelector('[data-radix]').value,
+			value: card.querySelector('[data-value]').value
+		};
 
-	if (isNaN(value)) value = 0;
-
-	for (const card of document.getElementsByClassName('number'))
-		card.children[3].value = value
-			.toString(card.children[1].value)
-			.toUpperCase();
+		return (content.value === ''? 0: parseInt(content.value, content.radix));
+	})();
 	
+	cardsGrid.querySelectorAll('.number').forEach(card => {
+		card.querySelector('[data-value]').value = value
+			.toString(card.querySelector('[data-radix]').value)
+			.toUpperCase();
+	})
 	updateSummary();
 }
 
 // Copiar valor do card
 const copyValue = event => {
 	navigator.clipboard.writeText(
-		event.target.parentNode.children[3].value
+		event.target.parentNode.querySelector('[data-value]').value
 	);
 }
 
-// Alterar ícone do botão
-const toogleIcon = event => {
+// Alterar ícone de acordo com o evento
+const changeCopyButtonIcon = event => {
 	const copyButton = event.target;
-	copyButton.classList.remove('bi-files');
-	copyButton.classList.add('bi-check2-square');
 
-	copyButton.addEventListener('blur', restoreIcon);
-}
+	let
+		class1 = 'bi-files',
+		class2 = 'bi-check2-square';
 
-// Devolver o ícone original
-const restoreIcon = event => {
-	const copyButton = event.target;
-	copyButton.classList.remove('bi-check2-square');
-	copyButton.classList.add('bi-files');
-
-	copyButton.removeEventListener('blur', restoreIcon);
+	if (event.type === 'blur') {
+		let aux = class1;
+		class1 = class2;
+		class2 = aux;
+	}
+	copyButton.classList.replace(class1, class2);
 }
 
 // Atualiza o resumo
@@ -154,17 +159,17 @@ const updateSummary = () => {
 	if (cardsCount) {
 		summaryCopy.disabled = false;
 
-		for (const card of document.getElementsByClassName('number')) {
+		cardsGrid.querySelectorAll('.number').forEach(card => {
 			const li = document.createElement('li');
 
-			li.innerHTML =
-				'Base '
-				+ card.children[1].value.padStart(NUM_DIGITS_OF_MAX_RADIX, '0')
-				+ ': '
-				+ card.children[3].value;
+			li.innerHTML = `Base ${
+				card.querySelector('[data-radix]').value.padStart(NUM_DIGITS_OF_MAX_RADIX, '0')
+			}: ${
+				card.querySelector('[data-value]').value
+			}`;
 			
 			summary.appendChild(li);
-		}
+		});
 	} else {
 		summaryCopy.disabled = true;
 
@@ -185,17 +190,21 @@ const getSummaryText = () => {
 
 // CONFIGURAÇÕES INICIAIS E EVENTOS
 
-numCards.children[1].innerHTML = MAX_CARDS;
+numCards.querySelector('[data-max]').innerHTML = MAX_CARDS;
+
 addCards(10, 16);
-for (const yearSpace of document.getElementsByClassName('current-year'))
-	yearSpace.innerHTML = new Date().getFullYear();
+
+document.querySelectorAll('.current-year').forEach(yearSpace =>
+	yearSpace.innerHTML = new Date().getFullYear()
+);
 
 addButton.addEventListener('click', () => addCards());
 
 summaryCopy.addEventListener('click', () =>
 	navigator.clipboard.writeText(getSummaryText())
 );
-summaryCopy.addEventListener('click', toogleIcon);
+summaryCopy.addEventListener('click', changeCopyButtonIcon);
+summaryCopy.addEventListener('blur', changeCopyButtonIcon);
 
 if (typeof navigator.share === "function") {
 	summaryShare.addEventListener('click', () =>
