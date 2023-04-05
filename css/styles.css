@@ -76,6 +76,9 @@ h1 {
 	outline: 1px solid #CCC;
 	position: relative;
 	background: #FFF;
+    width: 100%;
+    max-width: 190px;
+    margin: 0 auto
 }
 
 #cards-grid .number {
