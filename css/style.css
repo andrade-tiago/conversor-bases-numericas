@@ -1,0 +1,96 @@
+/* Fontes */
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&family=PT+Mono&display=swap');
+
+:root {
+	--font-1: 'Lexend Deca', sans-serif;
+	--font-2: 'PT Mono', monospace;
+	--font-color: #222;
+	--bg-1: #FFF;
+	--bg-2: #FFF;
+	--card-outline: #CCC;
+	--input-border: #CCC;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: var(--font-1);
+	color: var(--font-color);
+	transition: .2s;
+}
+
+body {
+	background: var(--bg-1);
+}
+
+body.dark {
+	--font-color: #AAA;
+	--bg-1: #121212;
+	--bg-2: #1F2122;
+	--card-outline: transparent;
+	--input-border: #555;
+}
+
+header {
+	background: var(--bg-2);
+	box-shadow: 0 0 10px #0006;
+}
+
+header ul {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.container {
+	width: 100%;
+	padding: 0 20px;
+}
+
+.container .content {
+	width: 100%;
+	max-width: 700px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+header .content {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+h1 {
+	text-align: center;
+}
+
+#cards {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+#cards .card {
+	width: 175px;
+	outline: 1px solid var(--card-outline);
+	margin: 8px;
+	border-radius: 8px;
+	border: 5px solid transparent;
+	box-shadow: 5px 5px 5px #0004;
+	padding: 5px;
+	background: var(--bg-2);
+}
+
+#cards .card input {
+	margin-bottom: 10px;
+	margin-top: 2px;
+	padding: 5px;
+	width: 100%;
+	border-radius: 5px;
+	border: 1px solid var(--input-border);
+	font-family: var(--font-2);
+	background: transparent;
+	font-size: 1rem;
+	outline: 0;
+}
