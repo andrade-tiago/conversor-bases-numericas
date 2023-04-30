@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/andrade-tiago/conversor-bases-numericas/main/img/demo_1.gif" width="400" />
+<img src="https://raw.githubusercontent.com/andrade-tiago/conversor-bases-numericas/main/img/demo_1.gif" />
 
 ## Links de acesso
 
