@@ -22,6 +22,8 @@
 		$table.querySelectorAll('[data-value]').forEach((rowValue, key) => {
 			rowValue.value = value.toString(DATA[key].radix).toUpperCase();
 		});
+
+		localStorage.setItem('value', JSON.stringify(value));
 	};
 
 	// Cria um objeto data e adiciona uma linha à tabela
@@ -114,7 +116,6 @@
 			) || 0;
 
 			updateValueInputs();
-			localStorage.setItem('value', JSON.stringify(value));
 		});
 
 		return input;
@@ -126,6 +127,7 @@
 		button.classList.add('btn', 'btn-trash', 'fa-regular', 'fa-trash-can', 'ruby');
 		button.title = 'Excluir linha';
 
+		// Deletar a linha e os dados relacionados
 		button.addEventListener('click', () => {
 			DATA.splice(DATA.findIndex(element => element.id === id), 1);
 			localStorage.setItem('data', JSON.stringify(DATA));
@@ -155,7 +157,7 @@
 		return button;
 	};
 
-	// Mudar ícone do botão de copiar
+	// Mudar ícone dos botões de copiar
 	const btnCopyInteraction = button => {
 		const
 			class1 = 'fa-clone',
@@ -202,19 +204,19 @@
 		return str;
 	};
 
-	// Alterna entre o modo diurno e noturno da página
+	// Alterna entre os modos diurno e noturno da página
 	const alterDarkMode = () => {
 		document.body.classList.toggle('dark');
 	};
 
-	// Opção de alterar entre modo diurno e noturno
+	// Opção de alterar tema da página
 	document.getElementById('theme').addEventListener('click', () => {
 		alterDarkMode();
 		darkMode = !darkMode;
 		localStorage.setItem('dark-mode', JSON.stringify(darkMode));
 	});
 
-	// Opção de adicionar linha (adicionára uma base ausente)
+	// Opção de adicionar linha (adicionará uma base ausente)
 	$addRow.addEventListener('click', () => {
 		const proc = radix => {
 			if (!DATA.find(obj => obj.radix === radix)) {
@@ -275,12 +277,13 @@
 	document.querySelectorAll('.year').forEach(element => element.innerHTML = CURRENT_YEAR);
 	document.getElementById('data-limit').innerHTML = MAX_ROWS;
 
-	// Gerar tabela
+	// Gerar dados iniciais da tabela
 	if (DATA.length)
 		DATA.forEach(item => addRow(item));
 	else
 		DEFAULT_ROWS.forEach(radix => createDataObj(radix));
 	
+	// Configurações iniciais
 	if (darkMode) alterDarkMode();
 	optinsActiveManager();
 })();
