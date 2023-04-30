@@ -2,95 +2,222 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&family=PT+Mono&display=swap');
 
 :root {
-	--font-1: 'Lexend Deca', sans-serif;
-	--font-2: 'PT Mono', monospace;
-	--font-color: #222;
+	--gold: #E09900;
+	--ruby: #810000;
+	--sapphire: #2F728D;
+	--black: #222425;
+	--white: #CCC;
+
 	--bg-1: #FFF;
-	--bg-2: #FFF;
-	--card-outline: #CCC;
-	--input-border: #CCC;
+	--bg-2: #E9E9E9;
+	--border: #8887;
+	--color: var(--black);
+	--font-ss: 'Lexend Deca', sans-serif;
+	--font-ms: 'PT Mono', monospace;
+}
+
+::selection {
+	background: var(--border);
 }
 
 * {
-	margin: 0;
 	padding: 0;
+	margin: 0;
 	box-sizing: border-box;
-	font-family: var(--font-1);
-	color: var(--font-color);
-	transition: .2s;
+}
+
+html {
+	font-size: 18px;
 }
 
 body {
+	font-family: var(--font-ss);
+	color: var(--color);
 	background: var(--bg-1);
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	transition: .2s;
+	line-height: 2;
 }
 
 body.dark {
-	--font-color: #AAA;
 	--bg-1: #121212;
-	--bg-2: #1F2122;
-	--card-outline: transparent;
-	--input-border: #555;
-}
-
-header {
-	background: var(--bg-2);
-	box-shadow: 0 0 10px #0006;
-}
-
-header ul {
-	list-style: none;
-	display: flex;
-	flex-wrap: wrap;
+	--bg-2: #222425;
+	--color: var(--white);
 }
 
 .container {
-	width: 100%;
-	padding: 0 20px;
+	padding: 0 10px;
 }
 
-.container .content {
-	width: 100%;
-	max-width: 700px;
+.content {
+	max-width: 650px;
 	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+header {
+	border-bottom: 1px solid var(--border);
 	padding: 20px;
 }
 
 header .content {
-	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
 	flex-wrap: wrap;
 }
 
+#menu {
+	list-style: none;
+	display: flex;
+}
+
+#menu button {
+	background: transparent;
+	color: var(--color);
+	border: 0;
+	font-size: 1.5rem;
+	cursor: pointer;
+	padding: 0 10px;
+	line-height: 1.5;
+}
+
+#menu button:hover {
+	color: var(--gold);
+}
+
+#menu button:focus {
+	outline: 1px dashed var(--color);
+}
+
 h1 {
 	text-align: center;
+	letter-spacing: 1px;
+	border-bottom: 1px solid var(--border);
+	padding-bottom: 5px;
 }
 
-#cards {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
-}
-
-#cards .card {
-	width: 175px;
-	outline: 1px solid var(--card-outline);
-	margin: 8px;
-	border-radius: 8px;
-	border: 5px solid transparent;
-	box-shadow: 5px 5px 5px #0004;
-	padding: 5px;
-	background: var(--bg-2);
-}
-
-#cards .card input {
+p {
 	margin-bottom: 10px;
-	margin-top: 2px;
-	padding: 5px;
+}
+
+#converter {
 	width: 100%;
+	border: 1px solid var(--border);
 	border-radius: 5px;
-	border: 1px solid var(--input-border);
-	font-family: var(--font-2);
-	background: transparent;
+	padding: 2px;
+}
+
+#converter th {
+	line-height: 2;
+}
+
+#converter td {
+	text-align: center;
+	border: 1px solid transparent;
+}
+
+#converter td.right {
+	text-align: right;
+	padding: 0 10px
+}
+
+#converter input {
+	width: 100%;
 	font-size: 1rem;
+	line-height: 2.5;
+	padding: 0 10px;
+	border: 1px solid var(--border);
+	text-align: right;
+	background: transparent;
+	color: var(--color);
+	transition: .2s;
+	font-family: var(--font-ms);
+	letter-spacing: 1px;
+	min-width: 80px;
+}
+
+#converter input:focus {
+	border-color: var(--gold);
+	outline: 1px solid var(--gold);
+}
+
+#converter .btn {
+	width: 100%;
+}
+
+.btn {
+	font-size: 1rem;
+	line-height: 2.5;
+	background: var(--bg-2);
+	border: 0;
+	cursor: pointer;
+	color: var(--color);
 	outline: 0;
+	padding: 0 15px;
+	transition: .1s;
+}
+
+.btn:hover {
+	background: var(--hover-bg);
+	color: var(--hover-color);
+}
+
+.btn:focus {
+	transform: scale(1.05);
+	outline: 1px dashed var(--color);
+}
+
+.btn:disabled {
+	background: transparent;
+	opacity: .5;
+	pointer-events: none;
+}
+
+.btn.gold {
+	--hover-bg: var(--gold);
+	--hover-color: var(--black);
+}
+
+.btn.ruby {
+	--hover-bg: var(--ruby);
+	--hover-color: var(--white);
+}
+
+.btn.sapphire {
+	--hover-bg: var(--sapphire);
+	--hover-color: var(--white);
+}
+
+footer .content {
+	align-items: center;
+	flex-wrap: wrap;
+	font-size: .8rem;
+	gap: 10px;
+}
+
+#social {
+	display: flex;
+	list-style: none;
+	gap: 10px;
+}
+
+#social a {
+	text-decoration: none;
+	color: var(--color);
+	font-size: 1.7rem;
+	padding: 5px;
+	outline: 0;
+	transition: .2s;
+}
+
+#social a:hover {
+	color: var(--gold);
+}
+
+#social a:focus {
+	transform: scale(1.3);
 }

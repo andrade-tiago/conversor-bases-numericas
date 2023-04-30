@@ -1,82 +1,286 @@
-const
-	MIN_RADIX = 2,
-	MAX_RADIX = 36,
-	CARDS = [];
+(() => {
+	const
+		MIN_RADIX = 2,
+		MAX_RADIX = 36,
+		MIN_ROWS = 2;
+		MAX_ROWS = 35,
+		RADIX_DIGITS = MAX_RADIX.toString().length,
+		DATA = JSON.parse(localStorage.getItem('data')) || [],
+		DEFAULT_ROWS = [10, 16, 2];
 
-const
-	cardsElement = document.getElementById('cards');
+	const
+		$addRow = document.getElementById('add-row'),
+		$dataCount = document.getElementById('data-count'),
+		$table = document.getElementById('converter');
 
-let
-	value = 255;
+	let
+		value = JSON.parse(localStorage.getItem('value')) || 255;
+		darkMode = JSON.parse(localStorage.getItem('dark-mode')) || false;
 
-// Adicionar card ao grid
-const addCard = (radix = 10, ... cardRadixes) => {
-	cardRadixes.unshift(radix);
+	// Atualiza os valores da tabela
+	const updateValueInputs = () => {
+		$table.querySelectorAll('[data-value]').forEach((rowValue, key) => {
+			rowValue.value = value.toString(DATA[key].radix).toUpperCase();
+		});
+	};
 
-	for (radix of cardRadixes) {
-		try {
+	// Cria um objeto data e adiciona uma linha à tabela
+	const createDataObj = radix => {
+		const obj = {
+			id: DATA.length ? (DATA[DATA.length - 1].id + 1) : 0,
+			radix: radix
+		};
 
-			const obj = {
-				id:    CARDS.length ? (CARDS[CARDS.length - 1].id + 1) : 0,
-				radix: radix
-			};
-			CARDS.push(obj);
-	
-			const card = document.createElement('div');
-			card.classList.add('card');
-	
-			// Base
-			const label1 = document.createElement('label');
-			label1.htmlFor   = `r-${obj.id}`;
-			label1.innerText = 'Base:';
-	
-			const input1 = document.createElement('input');
-			input1.id    = `r-${obj.id}`;
-			input1.value = radix;
-			input1.dataset.radix = '';
+		DATA.push(obj);
+		localStorage.setItem('data', JSON.stringify(DATA));
+		addRow(obj);
+	};
 
-			card.appendChild(label1);
-			card.appendChild(input1);
-	
-			// Valor
-			const label2 = document.createElement('label');
-			label2.htmlFor   = `v-${obj.id}`;
-			label2.innerText = 'Valor:';
-	
-			const input2 = document.createElement('input');
-			input2.id    = `v-${obj.id}`;
-			input2.value = value.toString(radix).toUpperCase();
-			input2.dataset.value = ''
+	// Adiciona uma linha à tabela
+	const addRow = (dataObj) => {
+		dataObj.radix = parseInt(dataObj.radix);
 
-			card.appendChild(label2);
-			card.appendChild(input2);
+		const row = document.createElement('tr');
+		row.dataset.id = dataObj.id;
 
-			// Opções
-			const copy = document.createElement('button');
-			copy.classList.add('btn-copy');
+		// Coluna Valor
+		const data1 = document.createElement('td');
 
-			const close = document.createElement('button');
-			close.classList.add('btn-close');
-	
-			card.appendChild(copy);
-			card.appendChild(close);
+		data1.appendChild(inputRadix(dataObj));
+		row.appendChild(data1);
 
-			// Adição do card
-			cardsElement.appendChild(card);
-		} catch (ex) {
-			console.error('Oops:', ex.message);
+		// Coluna Base
+		const data2 = document.createElement('td');
+		data2.colSpan = 2;
+
+		data2.appendChild(inputValue(dataObj));
+		row.appendChild(data2);
+
+		// Coluna Opções
+		const data3 = document.createElement('td');
+		data3.appendChild(copyVelueBtn(dataObj.id));
+		row.appendChild(data3);
+
+		const data4 = document.createElement('td');
+		data4.appendChild(deleteDataBtn(dataObj.id));
+		row.appendChild(data4);
+
+		$table.tBodies[0].appendChild(row);
+		$dataCount.innerHTML = DATA.length;
+	};
+
+	// Cria o input para a base
+	const inputRadix = dataObj => {
+		const input = document.createElement('input');
+		input.type = 'number';
+		input.title = 'Base: clique para editar';
+		input.min = MIN_RADIX;
+		input.max = MAX_RADIX;
+		input.value = dataObj.radix;
+		input.dataset.radix = '';
+
+		// Alterar representação do valor ao modificar base
+		input.addEventListener('change', () => {
+			let radix = parseInt(input.value) || 10;
+
+			if (radix < MIN_RADIX)
+				radix = MIN_RADIX;
+			else if (radix > MAX_RADIX)
+				radix = MAX_RADIX;
+
+			DATA[DATA.findIndex(item => item.id === dataObj.id)].radix = input.value = radix;
+			localStorage.setItem('data', JSON.stringify(DATA));
+
+			$table.querySelector(`[data-id="${dataObj.id}"] [data-value]`).value =
+				value.toString(radix).toUpperCase();
+		});
+
+		return input;
+	};
+
+	// Cria o input para o valor
+	const inputValue = dataObj => {
+		const input = document.createElement('input');
+		input.type = 'text';
+		input.title = 'Valor: clique para editar';
+		input.value = value.toString(dataObj.radix).toUpperCase();
+		input.dataset.value = '';
+
+		// Atualizar o valor dos inputs em tempo real
+		input.addEventListener('keyup', () => {
+			value = parseInt(
+				input.value,
+				DATA[DATA.findIndex(item => item.id === dataObj.id)].radix
+			) || 0;
+
+			updateValueInputs();
+			localStorage.setItem('value', JSON.stringify(value));
+		});
+
+		return input;
+	};
+
+	// Cria o botão para excluir linha
+	const deleteDataBtn = id => {
+		const button = document.createElement('button');
+		button.classList.add('btn', 'btn-trash', 'fa-regular', 'fa-trash-can', 'ruby');
+		button.title = 'Excluir linha';
+
+		button.addEventListener('click', () => {
+			DATA.splice(DATA.findIndex(element => element.id === id), 1);
+			localStorage.setItem('data', JSON.stringify(DATA));
+			
+			$table.querySelector(`[data-id="${id}"]`).remove();
+			$dataCount.innerHTML = DATA.length;
+			optinsActiveManager();
+		});
+
+		return button;
+	};
+
+	// Cria botão de copiar valor
+	const copyVelueBtn = id => {
+		const button = document.createElement('button');
+		button.classList.add('btn', 'btn-copy', 'fa', 'fa-clone', 'gold');
+		button.title = 'Copiar valor';
+
+		button.addEventListener('click', () => {
+			navigator.clipboard.writeText(
+				document.querySelector(`[data-id="${id}"] [data-value]`).value
+			);
+
+			btnCopyInteraction(button);
+		});
+
+		return button;
+	};
+
+	// Mudar ícone do botão de copiar
+	const btnCopyInteraction = button => {
+		const
+			class1 = 'fa-clone',
+			class2 = 'fa-clipboard-check';
+
+		if (!button.classList.contains(class1)) return;
+
+		button.classList.replace(class1, class2);
+
+		const title = button.title;
+		button.title = 'Copiado!';
+
+		const blurFunc = () => {
+			button.classList.replace(class2, class1);
+			button.title = title;
+
+			button.removeEventListener('blur', blurFunc);
+		};
+
+		button.addEventListener('blur', blurFunc);
+	};
+
+	// Gerencia a disponibilidade das opções da tabela
+	const optinsActiveManager = () => {
+		$table.querySelectorAll('.btn-trash').forEach(btn =>
+			btn.disabled = (DATA.length <= MIN_ROWS)
+		);
+
+		$addRow.disabled = (DATA.length >= MAX_ROWS);
+	};
+
+	// Retorna uma string representando as convesões na tabela
+	const getTableContent = () => {
+		let str = '';
+
+		DATA.forEach(obj => {
+			str += `Base ${
+				obj.radix.toString().padStart(RADIX_DIGITS, '0')
+			}: ${
+				value.toString(obj.radix).toUpperCase()
+			}\r\n`;
+		});
+
+		return str;
+	};
+
+	// Alterna entre o modo diurno e noturno da página
+	const alterDarkMode = () => {
+		document.body.classList.toggle('dark');
+	};
+
+	// Opção de alterar entre modo diurno e noturno
+	document.getElementById('theme').addEventListener('click', () => {
+		alterDarkMode();
+		darkMode = !darkMode;
+		localStorage.setItem('dark-mode', JSON.stringify(darkMode));
+	});
+
+	// Opção de adicionar linha (adicionára uma base ausente)
+	$addRow.addEventListener('click', () => {
+		const proc = radix => {
+			if (!DATA.find(obj => obj.radix === radix)) {
+				createDataObj(radix);
+				optinsActiveManager();
+				return true;
+			}
+
+			return false;
+		};
+
+		if (DATA.length < MAX_ROWS) {
+			for (radix of DEFAULT_ROWS) {
+				if (proc(radix)) return;
+			}
+
+			for (let radix = MIN_RADIX; radix <= MAX_RADIX; radix++) {
+				if (proc(radix)) return;
+			}
 		}
+	});
 
-	}
-};
+	// Opção de somar 1 ao valor
+	document.getElementById('sum').addEventListener('click', () => {
+		value++;
 
-document.getElementById('theme').addEventListener('click', () => {
-	document.body.classList.toggle('dark');
-});
+		updateValueInputs();
+	});
 
-document.getElementById('add').addEventListener('click', () => {
-	addCard();
-});
+	// Opção de substrair 1 do valor
+	document.getElementById('substract').addEventListener('click', () => {
+		value--;
 
-for (let i = 0; i < 10; i++)
-	addCard()
+		updateValueInputs();
+	});
+
+	// Copiar conversões
+	document.getElementById('data-copy').addEventListener('click', function() {
+		navigator.clipboard.writeText(getTableContent());
+
+		btnCopyInteraction(this);
+	});
+
+	// Opção de compartilhar conversões
+	const shareBtn = document.getElementById('data-share');
+	if (typeof navigator.share === 'function') {
+		shareBtn.addEventListener('click', () => {
+			navigator.share({
+				title: document.title,
+				text: getTableContent(),
+				url: window.location.href
+			});
+		});
+	} else shareBtn.disabled = true;
+
+	// Preencher elementos que citem o ano
+	const CURRENT_YEAR = new Date().getFullYear();
+	document.querySelectorAll('.year').forEach(element => element.innerHTML = CURRENT_YEAR);
+	document.getElementById('data-limit').innerHTML = MAX_ROWS;
+
+	// Gerar tabela
+	if (DATA.length)
+		DATA.forEach(item => addRow(item));
+	else
+		DEFAULT_ROWS.forEach(radix => createDataObj(radix));
+	
+	if (darkMode) alterDarkMode();
+	optinsActiveManager();
+})();

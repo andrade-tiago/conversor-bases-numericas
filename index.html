@@ -2,11 +2,12 @@
 <html lang="pt-BR">
 	<head>
 		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<title>Conversor de Bases Numéricas</title>
 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 		<link rel="stylesheet" href="./css/style.css" />
 
 		<script defer src="./js/main.js"></script>
@@ -15,13 +16,14 @@
 		<header>
 			<div class="container">
 				<div class="content">
-					<span>Logo</span>
-					<ul>
+					<span></span>
+					<ul id="menu">
 						<li>
-							<button id="theme" title="Tema escuro/claro">T</button>
-						</li>
-						<li>
-							<button id="add" title="Adicionar card">A</button>
+							<button
+								id="theme"
+								title="Tema escuro/claro"
+								class="fa fa-circle-half-stroke"
+							></button>
 						</li>
 					</ul>
 				</div>
@@ -33,9 +35,110 @@
 				<div class="content">
 					<h1>Conversor de Bases Numéricas</h1>
 
-					<div id="cards"></div>
+					<p>
+						Utilize a tabela abaixo para realizar conversões dentre as bases de 2 a 36.
+					</p>
+
+					<table id="converter">
+						<thead>
+							<colgroup>
+								<col>
+								<col span="2" class="value">
+								<col span="2">
+							</colgroup>
+
+							<tr>
+								<th scope="col">
+									Base
+								</th>
+								<th scope="col" colspan="2">
+									Valor
+								</th>
+								<th scope="col" colspan="2">
+									Opções
+								</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<td>
+									<button
+										class="btn fa-regular fa-square-plus sapphire"
+										id="add-row"
+										title="Adicionar base"
+									></button>
+								</td>
+								<td>
+									<button
+										class="btn fa fa-minus gold"
+										id="substract"
+										title="-1 do valor"
+									></button>
+								</td>
+								<td>
+									<button
+										class="btn fa fa-plus gold"
+										id="sum"
+										title="+1 ao valor"
+									></button>
+								</td>
+								<td colspan="2">
+									<span id="data-count">0</span>&nbsp;/&nbsp;<span id="data-limit">0</span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3" class="right">
+									Compartilhar dados:
+								</td>
+								<td>
+									<button
+										class="btn btn-copy fa fa-clone sapphire"
+										id="data-copy"
+										title="Copiar dados"
+									></button>
+								</td>
+								<td>
+									<button
+										class="btn fa-solid fa-share-from-square gold"
+										id="data-share"
+										title="Compartilhar dados"
+									></button>
+								</td>
+							</tr>
+						</tfoot>
+						<tbody></tbody>
+					</table>
 				</div>
 			</div>
 		</main>
+
+		<footer>
+			<div class="container">
+				<div class="content">
+					<ul id="social">
+						<li>
+							<a
+								href="https://linkedin.com/in/andrade-tiago"
+								target="_blank"
+								rel="author external"
+								class="fa-brands fa-linkedin"
+								title="LinkedIn"
+							></a>
+						</li>
+						<li>
+							<a
+								href="https://github.com/andrade-tiago"
+								target="_blank"
+								rel="author external"
+								class="fa-brands fa-github"
+								title="GitHub"
+							></a>
+						</li>
+					</ul>
+
+					<p>&copy; <span class="year"></span> — Tiago Andrade</p>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>
