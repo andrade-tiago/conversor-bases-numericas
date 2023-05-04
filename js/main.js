@@ -2,7 +2,7 @@
 	const
 		MIN_RADIX = 2,
 		MAX_RADIX = 36,
-		MIN_ROWS = 2;
+		MIN_ROWS = 2,
 		MAX_ROWS = 35,
 		RADIX_DIGITS = MAX_RADIX.toString().length,
 		DATA = JSON.parse(localStorage.getItem('data')) || [],
@@ -14,7 +14,7 @@
 		$table = document.getElementById('converter');
 
 	let
-		value = JSON.parse(localStorage.getItem('value')) || 255;
+		value = JSON.parse(localStorage.getItem('value')) || 255,
 		darkMode = JSON.parse(localStorage.getItem('dark-mode')) || false;
 
 	// Atualiza os valores da tabela
